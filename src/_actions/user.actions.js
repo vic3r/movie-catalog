@@ -1,6 +1,6 @@
-import { useHistory } from 'react-router-dom';
 import { userConstants } from '../_constants';
-import { login as loginApi, logout as logoutApi } from '../utils/apis/movie-api';
+import { userService } from '../_services';
+import { history } from '../_helpers';
 
 const login = (username, password) => {
   const request = (user) => {
@@ -14,15 +14,10 @@ const login = (username, password) => {
   };
 
   return (dispatch) => {
-    const history = useHistory();
     dispatch(request({ username }));
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-    loginApi(formData).then(
-      (token) => {
-        dispatch(success(username));
-        localStorage.setItem('token', token);
+    userService.login(username, password).then(
+      (user) => {
+        dispatch(success(user));
         history.push('/home');
       },
       (error) => {
@@ -33,7 +28,7 @@ const login = (username, password) => {
 };
 
 const logout = () => {
-  logoutApi();
+  userService.logout();
   return { type: userConstants.LOGOUT };
 };
 
