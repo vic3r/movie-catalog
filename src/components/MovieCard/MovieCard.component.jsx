@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Collapse,
+  IconButton,
+  Typography,
+  Modal,
+} from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShopOutlinedIcon from '@material-ui/icons/ShopOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ConfirmationCard from '../ConfirmationCard';
 
 import useStyles from './styles';
+import { history } from '../../_helpers';
 import { addMovie } from '../../utils/apis/movie-api';
 
 const MovieCard = (props) => {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -26,7 +40,7 @@ const MovieCard = (props) => {
 
   const purchaseMovie = () => {
     addMovie(props.id)
-      .then(() => console.log('purchased'))
+      .then(() => history.push('/home'))
       .catch(() => console.log('error purchasing'));
   };
 
@@ -40,6 +54,7 @@ const MovieCard = (props) => {
         }
         title={props.title}
         subheader={props.director}
+        style={{ color: 'white' }}
       />
       <CardMedia className={classes.media} image={props.image} title="Paella dish" />
       <CardContent>
@@ -49,10 +64,18 @@ const MovieCard = (props) => {
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+          <FavoriteIcon style={{ color: 'white' }} />
         </IconButton>
-        <IconButton aria-label="shop" onClick={purchaseMovie}>
-          <ShopOutlinedIcon />
+        <IconButton aria-label="shop" onClick={handleOpen}>
+          <ShopOutlinedIcon style={{ color: 'white' }} />
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+          >
+            <ConfirmationCard handlePurchase={purchaseMovie} handleClose={handleClose} />
+          </Modal>
         </IconButton>
         <IconButton
           className={clsx(classes.expand, {
@@ -62,7 +85,7 @@ const MovieCard = (props) => {
           aria-expanded={expanded}
           aria-label="show more"
         >
-          <ExpandMoreIcon />
+          <ExpandMoreIcon style={{ color: 'white' }} />
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>

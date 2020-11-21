@@ -5,10 +5,12 @@ import Searchbar from '../../components/Searchbar';
 import MovieList from '../../components/MovieList';
 import { getMovieByName } from '../../utils/apis/movie-api';
 import { useMovieContext } from '../../providers/MoviesProvider';
+import useStyles from './styles';
 
 const Home = () => {
   const { movies, setMovies } = useMovieContext();
   const [term, setTerm] = useState('Iron Man');
+  const classes = useStyles();
   useEffect(() => {
     getMovieByName(term)
       .then((fetchMovies) => {
@@ -19,12 +21,12 @@ const Home = () => {
   }, [term, setMovies]);
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12}>
-        <Searchbar onTermSubmit={setTerm} />
+    <div className={classes.root}>
+      <Searchbar onTermSubmit={setTerm} />
+      <Grid className={classes.movies} container spacing={1}>
+        <MovieList movies={movies} />
       </Grid>
-      <MovieList movies={movies} />
-    </Grid>
+    </div>
   );
 };
 
