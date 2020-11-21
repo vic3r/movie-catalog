@@ -4,6 +4,7 @@ import { red } from '@material-ui/core/colors';
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
+    backgroundColor: '#535353',
   },
   media: {
     height: 0,
